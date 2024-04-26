@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Filesystem API</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<style>
+			.fragment.blur {
+			  filter: blur(5px);
+			}
+			.fragment.blur.visible {
+			  filter: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h4>What is the Filesystem API?</h4>
+					<img src="./dist/img/1-1.png" width="800px"  alt="">
+				</section>
+				<section>
+					<section>
+						<h3>Implements various features</h3>
+						<ul>
+							<li>Offline applications</li>
+							<li>Data Caching</li>
+							<li>Working with settings and configurations</li>
+							<li>File and document management</li>
+						</ul>						
+					</section>
+					<section>
+						<h6>Offline applications</h6>
+
+						<ol>
+							<li>Readers and news apps</li>
+							<li>Maps and navigation</li>
+							<li>Messengers and email clients</li>
+							<li>Tasks and organizers</li>
+							<li>Media Players</li>
+							<li>Educational Apps</li>
+							<li>Games</li>
+						</ol>
+						<div>
+							<img src="./dist/img/1-2.jpeg" width="180px"  alt="">
+							<img src="./dist/img/1-3.jpeg" width="180px"  alt="">
+							<img src="./dist/img/1-4.jpg" width="180px"  alt="">
+							<img src="./dist/img/1-5.png" width="180px"  alt="">
+						</div>
+					</section>
+					<section>
+						<h6>Data Caching</h6>
+						<ol>
+							<li>Images</li>
+							<li>Scripts and styles</li>
+						</ol>
+						<div>
+							<img src="./dist/img/2-1.png" width="500px"  alt="">
+						</div>
+					</section>
+					<section>
+						<h6>Working with settings and configurations</h6>
+						<ol>
+							<li>User Interface Settings</li>
+							<li>Configuration of notifications and alerts</li>
+							<li>Local data storage</li>
+							<li>Security and Privacy Settings</li>
+							<li>Integration with external services</li>
+						</ol>
+						<div>
+							<img src="./dist/img/2-2.png" width="400px"  alt="">
+						</div>
+					</section>
+					<section>
+						<h6>File and document management</h6>
+						<div>
+							<img src="./dist/img/3-1.jpg" width="600px"  alt="">
+						</div>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h6>Filesystem API Basics</h6>
+						<i>Creation</i>
+						<pre>
+							<code data-trim data-noescape>
+								const fs = require('fs');
+								const path = require('path');
+							</code>
+						</pre>
+						<pre>
+							<code data-trim data-noescape>
+								// Creating a directory
+								const directoryPath = path.join(__dirname, 'myDirectory');
+
+								fs.mkdir(directoryPath, { recursive: true }, (err) => {
+									if (err) {
+										console.error('Error creating the directory:', err);
+										return;
+									}
+									console.log('The directory was created successfully.');
+								});
+							</code>
+						</pre>
+					</section>
+					<section>
+						<h6>Filesystem API Basics</h6>
+						<i>Creation</i>
+						<pre>
+							<code data-trim data-noescape>
+								const fs = require('fs');
+								const path = require('path');
+							</code>
+						</pre>
+						<pre>
+							<code data-trim data-noescape>
+								// Creating a file
+								const filePath = path.join(directoryPath, 'myFile.txt');
+								const fileContent = 'Hello, world!';
+								
+								fs.writeFile(filePath, fileContent, (err) => {
+									if (err) {
+										console.error('Error creating the file:', err);
+										return;
+									}
+									console.log('The file was created successfully.');
+								});
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h6>Filesystem API Basics</h6>
+						<i>Reading</i>
+						<pre>
+							<code>
+								const fs = require('fs');
+								const path = require('path');
+								const filePath = path.join(__dirname, 'text.txt');
+								const readStream = fs.ReadStream(filePath, { encoding: 'utf8' });
+
+								//  processes each piece of data (chunk) and outputs it to the console without adding a new line.
+								readStream.on('data', (chunk) => {
+								console.log(chunk);
+								});
+
+								//notifies that the file has been read.
+								readStream.on('end', () => {
+								console.log('File reading completed.');
+								});
+
+								// handles an error when reading a file.
+								readStream.on('error', (err) => {
+								console.error('Error reading the file:', err);
+								});
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h6>Filesystem API Basics</h6>
+						<i>Record</i>
+						<pre>
+							<code>
+								const fs = require('fs');
+								const path = require('path');
+								const bytext = 'Goodbye! The recording is completed.';
+
+								const filePath = path.join('02-write-file', 'text.txt');
+								const writeStream = fs.createWriteStream(filePath);
+
+								const promptText = 'Enter the text (enter "exit" to complete): ';
+
+								// process.stdout It is an output stream to the console.
+								// write(promptText) used to write text to this output stream.
+								process.stdout.write(promptText);
+
+								process.stdin.setEncoding('utf8');
+								process.stdin.on('data', (input) => {
+								// removing spaces from both ends
+								input = input.trim();
+
+								if (input.toLowerCase() === 'exit') {
+									console.log(bytext);
+									process.exit();
+								}
+
+								writeStream.write(input + '\n');
+								process.stdout.write(promptText);
+								});
+
+								process.on('SIGINT', () => {
+								console.log(`\n${bytext}`);
+								process.exit();
+								});
+
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<section>
+						<h6>Filesystem API Basics</h6>
+						<i>Removal</i>
+						<pre>
+							<code>
+								// Deleting files from folder that are no longer in src
+								const folderFile = await fs.readdir(folder);
+								await Promise.all(
+								  folderFile.map(async (file) => {
+									const srcPath = path.join(src, file);
+									const folderPath = path.join(folder, file);
+							
+									// If the file does not exist in src, it deletes
+									try {
+									  await fs.access(srcPath);
+									} catch (err) {
+									  await fs.unlink(folderPath);
+									}
+								  }),
+								);
+
+							</code>
+						</pre>
+					</section>
+				</section>
+				<section>
+					<h6>Security and Privacy</h6>
+					<p class="fragment custom blur">Restricting access and permissions</p>
+					<p class="fragment custom blur">Data encryption</p>
+					<p class="fragment custom blur">Error handling and notifications</p>
+				</section>
+				<section>
+					<h6>Conclusion</h6>
+					<p>The Filesystem API provides powerful capabilities for working with the user's file system, but requires attention to security and compatibility.</p>
+				</section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
